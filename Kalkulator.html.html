@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuldservice Kalkulator til Gaffeltrucks</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            padding: 20px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            color: #444444;
+            display: block;
+            margin-bottom: 5px;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        .result p {
+            margin: 10px 0;
+        }
+        .pdf-button {
+            background-color: #28a745;
+            margin-top: 15px;
+        }
+        .pdf-button:hover {
+            background-color: #218838;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Fuldservice Kalkulator</h1>
+
+        <form id="calculatorForm">
+            <div class="form-group">
+                <label for="brand">Vælg Mærke</label>
+                <select id="brand" required>
+                    <option value="">Vælg Mærke</option>
+                    <option value="yale">Yale</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="type">Vælg Type</label>
+                <select id="type" required>
+                    <option value="">Vælg Type</option>
+                    <option value="electric">Elektrisk</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="model">Vælg Model</label>
+                <select id="model" required>
+                    <option value="">Vælg Model</option>
+                    <option value="ERP15VT">ERP15VT</option>
+                    <option value="ERP16VT">ERP16VT</option>
+                    <option value="ERP18VT">ERP18VT</option>
+                    <option value="ERP20VT">ERP20VT</option>
+                    <option value="ERP13VC">ERP13VC</option>
+                    <option value="ERP15VC">ERP15VC</option>
+                    <option value="ERP16UXT">ERP16UXT</option>
+                    <option value="ERP18UXT">ERP18UXT</option>
+                    <option value="ERP20UXT">ERP20UXT</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tonnage">Vælg Tonnage</label>
+                <select id="tonnage" required>
+                    <option value="">Vælg Tonnage</option>
+                    <optgroup label="VT-serien">
+                        <option value="1.5">1.5 tons (ERP15VT)</option>
+                        <option value="1.6">1.6 tons (ERP16VT)</option>
+                        <option value="1.8">1.8 tons (ERP18VT)</option>
+                        <option value="2.0">2.0 tons (ERP20VT)</option>
+                    </optgroup>
+                    <optgroup label="VC-serien">
+                        <option value="1.3">1.3 tons (ERP13VC)</option>
+                        <option value="1.5">1.5 tons (ERP15VC)</option>
+                    </optgroup>
+                    <optgroup label="UXT-serien">
+                        <option value="1.6">1.6 tons (ERP16UXT)</option>
+                        <option value="1.8">1.8 tons (ERP18UXT)</option>
+                        <option value="2.0">2.0 tons (ERP20UXT)</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="hoursPerYear">Antal køretimer om året</label>
+                <input type="number" id="hoursPerYear" required placeholder="Indtast antal køretimer" min="0">
+            </div>
+            <div class="form-group">
+                <label for="serviceCost">Serviceomkostninger pr. år (kr.)</label>
+                <input type="number" id="serviceCost" required placeholder="Indtast serviceomkostninger" min="0">
+            </div>
+            <div class="form-group">
+                <label for="unexpectedCost">Uforudsete udgifter pr. år (kr.)</label>
+                <input type="number" id="unexpectedCost" required placeholder="Indtast uforudsete udgifter" min="0">
+            </div>
+            <div class="form-group">
+                <label for="adminCost">Administrationsomkostninger pr. år (kr.)</label>
+                <input type="number" id="adminCost" required placeholder="Indtast administrationsomkostninger" min="0">
+            </div>
+            <div class="form-group">
+                <label for="travelCost">Udgifter til kørsel (kr.)</label>
+                <input type="number" id="travelCost" required placeholder="Indtast udgifter til kørsel" min="0">
+            </div>
+            <div class="form-group">
+                <label for="margin">Ønsket margin (i %)</label>
+                <input type="number" id="margin" required placeholder="Indtast ønsket margin" min="0">
+            </div>
+            <button type="button" onclick="calculateCosts()">Beregn Omkostninger</button>
+        </form>
+
+        <div id="result" class="result"></div>
+        <button type="button" class="pdf-button" onclick="generatePDF()">Gem som PDF</button>
+    </div>
+
+    <script>
+        function calculateCosts() {
+            const serviceCost = parseFloat(document.getElementById('serviceCost').value);
+            const unexpectedCost = parseFloat(document.getElementById('unexpectedCost').value);
+            const adminCost = parseFloat(document.getElementById('adminCost').value);
+            const travelCost = parseFloat(document.getElementById('travelCost').value);
+            const margin = parseFloat(document.getElementById('margin').value);
+            const hoursPerYear = parseFloat(document.getElementById('hoursPerYear').value);
+
+            const expectedVisits = Math.ceil(hoursPerYear / 200);
+            const totalServiceCost = serviceCost + unexpectedCost + adminCost + travelCost;
+            const marginAmount = (totalServiceCost * margin) / 100;
+            const totalCostWithMargin = totalServiceCost + marginAmount;
+
+            const resultText = `
+                <p><strong>Serviceomkostninger pr. år:</strong> ${totalServiceCost.toFixed(2)} kr.</p>
+                <p><strong>Forventet antal besøg pr. år:</strong> ${expectedVisits}</p>
+                <p><strong>Uforudsete udgifter pr. år:</strong> ${unexpectedCost.toFixed(2)} kr.</p>
+                <p><strong>Administrationsomkostninger pr. år:</strong> ${adminCost.toFixed(2)} kr.</p>
+                <p><strong>Udgifter til kørsel pr. år:</strong> ${travelCost.toFixed(2)} kr.</p>
+                <p><strong>Total omkostning med ønsket margin:</strong> ${totalCostWithMargin.toFixed(2)} kr.</p>
+            `;
+            document.getElementById('result').innerHTML = resultText;
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            const result = document.getElementById('result').innerText;
+            pdf.text("Fuldservice Kalkulator - Resultater", 10, 10);
+            pdf.text(result, 10, 20);
+            pdf.save("Fuldservice_Kalkulator.pdf");
+        }
+    </script>
+</body>
+</html>
